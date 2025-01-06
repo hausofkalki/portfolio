@@ -1,35 +1,90 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { AnimatePresence } from "framer-motion";
+import { TransitionProvider } from "./context/TransitionContext";
+import { PageTransition } from "./components/PageTransition";
+import LoadingScreen from "./components/LoadingScreen";
+import Hero from "./pages/Hero";
+import About from "./pages/About";
+import Work from "./pages/Work";
+import Process from "./pages/Process";
+import Contact from "./pages/Contact";
 
-function App() {
-  const [count, setCount] = useState(0)
+function Pages() {
+  const location = useLocation();
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route
+          path="/"
+          element={
+            <PageTransition>
+              <Hero />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <PageTransition>
+              <About />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/work"
+          element={
+            <PageTransition>
+              <Work />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/process"
+          element={
+            <PageTransition>
+              <Process />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <PageTransition>
+              <Contact />
+            </PageTransition>
+          }
+        />
+      </Routes>
+    </AnimatePresence>
+  );
 }
 
-export default App
+function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadAssets = async () => {
+      // Simulate asset loading with a timeout
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      setIsLoading(false);
+    };
+
+    loadAssets();
+  }, []);
+  return (
+    <TransitionProvider>
+      <Router basename="/portfolio">
+        {isLoading ? <LoadingScreen /> : <Pages />}
+      </Router>
+    </TransitionProvider>
+  );
+}
+
+export default App;
