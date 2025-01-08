@@ -2,6 +2,7 @@
 import { motion, useScroll, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import Header from "../components/Header";
+import ImagePopup from '../components/ImagePopup';
 
 type Step = {
   number: string;
@@ -9,6 +10,8 @@ type Step = {
   description: string;
   image: string;
   category: string;
+  link: string;
+  relatedImages: string[];
 };
 
 type Project = {
@@ -28,6 +31,17 @@ const projects: Project[] = [
         image:
           "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
         category: "RESIDENTIAL",
+        link: "https://example.com/modern-minimalist-villa",
+        relatedImages: [
+          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
+          // Add more related images here
+        ],
       },
       {
         number: "02",
@@ -37,6 +51,14 @@ const projects: Project[] = [
         image:
           "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop",
         category: "COMMERCIAL",
+        link: "https://example.com/urban-retail-experience",
+        relatedImages: [
+          "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
+          // Add more related images here
+        ],
       },
     ],
   },
@@ -51,6 +73,12 @@ const projects: Project[] = [
         image:
           "https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?q=80&w=2021&auto=format&fit=crop",
         category: "HOSPITALITY",
+        link: "https://example.com/luxury-hotel-design",
+        relatedImages: [
+          "https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?q=80&w=2021&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?q=80&w=2021&auto=format&fit=crop",
+          // Add more related images here
+        ],
       },
       {
         number: "04",
@@ -60,6 +88,12 @@ const projects: Project[] = [
         image:
           "https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=2069&auto=format&fit=crop",
         category: "COMMERCIAL",
+        link: "https://example.com/corporate-headquarters",
+        relatedImages: [
+          "https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=2069&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=2069&auto=format&fit=crop",
+          // Add more related images here
+        ],
       },
     ],
   },
@@ -73,6 +107,10 @@ export default function Work() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [popupImages, setPopupImages] = useState<string[]>([]);
+  const [popupTitle, setPopupTitle] = useState('');
+  const [popupCategory, setPopupCategory] = useState('');
 
   const numberVariants = {
     enter: {
@@ -110,6 +148,13 @@ export default function Work() {
       container?.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  const handleImageClick = (images: string[], title: string, category: string) => {
+    setPopupImages(images);
+    setPopupTitle(title);
+    setPopupCategory(category);
+    setIsPopupOpen(true);
+  };
 
   return (
     <main
@@ -156,6 +201,16 @@ export default function Work() {
         </div>
       </div>
 
+      {/* Popup for related images */}
+      {isPopupOpen && (
+        <ImagePopup 
+          images={popupImages} 
+          onClose={() => setIsPopupOpen(false)}
+          title={popupTitle}
+          category={popupCategory}
+        />
+      )}
+
       {/* Project Sections */}
       {projects.map((project) =>
         project.steps.map((step) => (
@@ -171,59 +226,61 @@ export default function Work() {
               }`}
             >
               <motion.div
-                className="w-full md:w-1/2 relative overflow-hidden group"
+                className="w-full md:w-1/2 relative overflow-hidden group cursor-pointer"
                 onHoverStart={() => setIsHovered(true)}
                 onHoverEnd={() => setIsHovered(false)}
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
               >
-                <motion.div
-                  className="relative aspect-[4/3] overflow-hidden"
-                  animate={{
-                    scale: isHovered ? 1.1 : 1,
-                  }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <img
-                    src={step.image}
-                    alt={step.title}
-                    className="w-full h-full object-cover"
-                  />
+                <a onClick={() => handleImageClick(step.relatedImages, step.title, step.category)}>
                   <motion.div
-                    className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: isHovered ? 1 : 0 }}
-                    transition={{ duration: 0.3 }}
+                    className="relative aspect-[4/3] overflow-hidden cursor-pointer"
+                    animate={{
+                      scale: isHovered ? 1.1 : 1,
+                    }}
+                    transition={{ duration: 0.4 }}
                   >
-                    <motion.span
-                      className="text-white text-xl font-light tracking-wider flex items-center"
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{
-                        y: isHovered ? 0 : 20,
-                        opacity: isHovered ? 1 : 0,
-                      }}
-                      transition={{ duration: 0.3, delay: 0.1 }}
+                    <img
+                      src={step.image}
+                      alt={step.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <motion.div
+                      className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: isHovered ? 1 : 0 }}
+                      transition={{ duration: 0.3 }}
                     >
-                      VIEW PROJECT
-                      <svg
-                        fill="#ffffff"
-                        width="28px"
-                        height="28px"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                        transform="rotate(0)"
+                      <motion.span
+                        className="text-white text-xl font-light tracking-wider flex items-center"
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{
+                          y: isHovered ? 0 : 20,
+                          opacity: isHovered ? 1 : 0,
+                        }}
+                        transition={{ duration: 0.3, delay: 0.1 }}
                       >
-                        <rect
-                          width="24"
-                          height="24"
-                          transform="rotate(180 12 12)"
-                          opacity="0"
-                        ></rect>
-                        <path d="M18 7.05a1 1 0 0 0-1-1L9 6a1 1 0 0 0 0 2h5.56l-8.27 8.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0L16 9.42V15a1 1 0 0 0 1 1 1 1 0 0 0 1-1z"></path>
-                      </svg>
-                    </motion.span>
+                        VIEW PROJECT
+                        <svg
+                          fill="#ffffff"
+                          width="28px"
+                          height="28px"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                          transform="rotate(0)"
+                        >
+                          <rect
+                            width="24"
+                            height="24"
+                            transform="rotate(180 12 12)"
+                            opacity="0"
+                          ></rect>
+                          <path d="M18 7.05a1 1 0 0 0-1-1L9 6a1 1 0 0 0 0 2h5.56l-8.27 8.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0L16 9.42V15a1 1 0 0 0 1 1 1 1 0 0 0 1-1z"></path>
+                        </svg>
+                      </motion.span>
+                    </motion.div>
                   </motion.div>
-                </motion.div>
+                </a>
               </motion.div>
 
               <div className="w-full md:w-1/2">

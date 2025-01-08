@@ -2,6 +2,8 @@
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import Header from '../components/Header'
+import Kalki from '../assets/about/Kalki.jpg'
+import Sakthi from '../assets/about/Sakthi.jpg'
 
 export default function About() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -31,7 +33,7 @@ export default function About() {
       {/* Hero Section */}
       <section className="pt-32 px-4 md:px-8 lg:px-16">
         <motion.h1 
-          className="text-5xl md:text-7xl font-light mb-8"
+          className="text-3xl md:text-5xl lg:text-7xl font-light mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
@@ -40,7 +42,7 @@ export default function About() {
         </motion.h1>
         
         <motion.p 
-          className="text-lg md:text-2xl font-light max-w-6xl mb-16"
+          className="text-lg md:text-xl lg:text-2xl font-light max-w-6xl mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
@@ -50,7 +52,7 @@ export default function About() {
       </section>
 
       {/* Content Sections */}
-      <section className="px-4 md:px-8 lg:px-16 py-16">
+      <section className="px-4 md:px-8 lg:px-16 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -58,7 +60,7 @@ export default function About() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <p className="text-2xl md:text-xl font-light text-gray-600 leading-relaxed lg:leading-relaxed">
+            <p className="text-md md:text-lg lg:text-xl font-light text-gray-600 leading-relaxed lg:leading-relaxed">
             Our approach blends sophisticated aesthetics with harmonious spatial planning, curating interiors that are both visually captivating and effortlessly functional. From bespoke furnishings to exquisite material palettes, we design environments that resonate with your personality and elevate everyday living.
             </p>
           </motion.div>
@@ -69,7 +71,7 @@ export default function About() {
             transition={{ duration: 0.8, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            <p className="text-2xl md:text-xl font-light text-gray-600 leading-relaxed lg:leading-relaxed">
+            <p className="text-md md:text-lg lg:text-xl font-light text-gray-600 leading-relaxed lg:leading-relaxed">
               At <b>Haus of Kalki</b>, we transform spaces into immersive experiences. By fusing innovation with meticulous craftsmanship, we bring your design dreams to life—creating interiors that exude elegance, character, and enduring style.
             </p>
           </motion.div>
@@ -78,7 +80,7 @@ export default function About() {
 
       <section className="px-4 md:px-8 lg:px-16 py-16">
         <motion.h1 
-          className="text-5xl md:text-5xl font-light mb-8"
+          className="text-xl md:text-3xl lg:text-5xl font-light mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
@@ -99,7 +101,9 @@ export default function About() {
           Our Team
         </motion.h2>
 
-        <div className="flex justify-center">
+        {/* Grid container for team members */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+          {/* First Team Member */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -109,13 +113,32 @@ export default function About() {
           >
             <div className="w-48 h-48 mx-auto mb-6 rounded-full overflow-hidden">
               <img 
-                src="https://picsum.photos/200" 
-                alt="Team Member"
+                src={Kalki}
+                alt="Kalki Palanisamy"
                 className="w-full h-full object-cover"
               />
             </div>
             <h3 className="text-xl mb-2">Kalki Palanisamy</h3>
             <p className="text-white/70">Founder & Principal Designer</p>
+          </motion.div>
+
+          {/* Second Team Member */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <div className="w-48 h-48 mx-auto mb-6 rounded-full overflow-hidden">
+              <img 
+                src={Sakthi}
+                alt="Sakthi Kumaran"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <h3 className="text-xl mb-2">Sakthi Kumaran</h3>
+            <p className="text-white/70">Head of Procurement</p>
           </motion.div>
         </div>
       </section>
