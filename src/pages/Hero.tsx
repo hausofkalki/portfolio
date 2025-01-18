@@ -6,6 +6,7 @@ import eclectic_main from "../assets/work/eclectic/main.jpg";
 import modern_main from "../assets/work/modern/main.jpg";
 import white_main from "../assets/work/white/main.jpg";
 import indian_main from "../assets/work/indian/main.jpg";
+import { useNavigate } from "react-router-dom";
 
 // Arrow components
 const LeftArrow = () => (
@@ -98,6 +99,7 @@ export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const navigate = useNavigate();
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -138,7 +140,7 @@ export default function Hero() {
 
   // Add the navigation function
   const handleViewAllWorks = () => {
-    window.location.href = "/portfolio/work";
+    navigate('/work');
   };
 
   return (
@@ -213,7 +215,7 @@ export default function Hero() {
                   </h1>
                   <motion.span
                     onClick={handleViewAllWorks}
-                    className="inline-flex items-center gap-1 border border-white px-4 py-3 text-sm hover:bg-white hover:text-terra transition-all cursor-pointer"
+                    className="inline-flex items-center gap-1 border border-white px-6 pr-4 py-3 text-sm hover:bg-white hover:text-terra transition-all cursor-pointer"
                     whileHover={{
                       scale: 1.05,
                     }}
