@@ -102,7 +102,7 @@ export default function About() {
         </motion.h2>
 
         {/* Grid container for team members */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-0">
           {/* First Team Member */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}

@@ -2,6 +2,7 @@
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTransition } from "../context/TransitionContext";
+import Logo from "./Logo";
 
 // Menu Button Component
 // Menu and Close button combined into one component
@@ -128,19 +129,6 @@ const MenuButton = ({
   </div>
 );
 
-// Logo Component
-const Logo = () => (
-  <svg
-    width="40"
-    height="40"
-    viewBox="0 0 40 40"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path d="M20 0L40 20L20 40L0 20L20 0Z" fill="currentColor" />
-  </svg>
-);
-
 interface HeaderProps {
   isScrolled: boolean;
   isMenuOpen: boolean;
@@ -198,15 +186,12 @@ export default function Header({
           <Link
             to="/"
             className={`flex items-center space-x-3 ${
-              location.pathname === "/" && !isScrolled
+              location.pathname === "/" && !isScrolled && !isMenuOpen
                 ? "text-white"
                 : "text-black"
             }`}
           >
-            <Logo />
-            <span className="text-xm font-light tracking-wider">
-              HAUS OF KALKI
-            </span>
+            <Logo className="w-12 h-12 md:w-16 md:h-16" isMenuOpen={isMenuOpen} />
           </Link>
 
           {/* Desktop Navigation */}

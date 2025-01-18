@@ -1,73 +1,142 @@
-import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-type ImageViewerProps = {
+interface ImageViewerProps {
   images: string[];
   selectedImage: string;
   onClose: () => void;
-};
+  title: string;
+  category: string;
+}
 
-const ImageViewer: React.FC<ImageViewerProps> = ({ images, selectedImage, onClose }) => {
-  const [currentIndex, setCurrentIndex] = useState(images.indexOf(selectedImage));
-  const viewerRef = useRef<HTMLDivElement>(null); // Reference for the viewer
+const ImageViewer: React.FC<ImageViewerProps> = ({ images, selectedImage, onClose, title, category }) => {
+  const viewerRef = useRef<HTMLDivElement>(null);
+  const [currentIndex, setCurrentIndex] = React.useState(images.indexOf(selectedImage));
 
-  const LeftArrow = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  )
-  
-  const RightArrow = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  )
-
-  const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-  };
-
-  const handlePrev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
-  };
-
-  // Add useEffect to handle body overflow
-  React.useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = 'unset';
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (viewerRef.current && !viewerRef.current.contains(event.target as Node)) {
+        onClose();
+      }
     };
-  }, []);
+
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      } else if (event.key === 'ArrowLeft') {
+        navigateImages('prev');
+      } else if (event.key === 'ArrowRight') {
+        navigateImages('next');
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyPress);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [onClose]);
+
+  const navigateImages = (direction: 'prev' | 'next') => {
+    if (direction === 'prev') {
+      setCurrentIndex(prev => (prev > 0 ? prev - 1 : images.length - 1));
+    } else {
+      setCurrentIndex(prev => (prev < images.length - 1 ? prev + 1 : 0));
+    }
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    // Prevent click from propagating to the outer container
+    e.stopPropagation();
+  };
 
   return (
-    <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black bg-opacity-90">
-      <motion.div
-        ref={viewerRef}
-        className="relative max-w-6xl w-full"
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        exit={{ scale: 0 }}
-      >
-        <button onClick={onClose} className="absolute top-2 right-2 text-white text-4xl">
-          &times;
-        </button>
-        <img src={images[currentIndex]} alt={`Image ${currentIndex + 1}`} className="w-full h-auto rounded" />
-        <div className="absolute top-1/2 left-0 right-0 flex justify-between">
-          <button
-            onClick={handlePrev}
-            className="text-white bg-black bg-opacity-50 p-4 rounded-l hover:bg-opacity-70 transition duration-300"
+    <motion.div
+      className="fixed inset-0 z-[60] bg-black/95 flex items-center justify-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <div ref={viewerRef} className="relative w-full h-full flex items-center justify-center" onClick={handleClick}>
+        {/* Title and Category */}
+        <div className="absolute top-8 left-8 text-white">
+          <motion.span 
+            className="text-sm text-[#FF4D4D] tracking-wider mb-2 block"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
           >
-            <LeftArrow />
-          </button>
-          <button
-            onClick={handleNext}
-            className="text-white bg-black bg-opacity-50 p-4 rounded-r hover:bg-opacity-70 transition duration-300"
+            {category}
+          </motion.span>
+          <motion.h2 
+            className="text-2xl font-light"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
           >
-            <RightArrow />
-          </button>
+            {title}
+          </motion.h2>
         </div>
-      </motion.div>
-    </div>
+
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-8 right-8 text-white hover:text-[#FF4D4D] transition-colors duration-300 z-10"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+
+        {/* Navigation buttons */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            navigateImages('prev');
+          }}
+          className="absolute left-8 text-white hover:text-[#FF4D4D] transition-colors duration-300"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            navigateImages('next');
+          }}
+          className="absolute right-8 text-white hover:text-[#FF4D4D] transition-colors duration-300"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </button>
+
+        {/* Image container */}
+        <div className="w-full h-full flex items-center justify-center p-16">
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentIndex}
+              src={images[currentIndex]}
+              alt={`Viewing image ${currentIndex + 1}`}
+              className="max-h-[80vh] w-auto object-contain"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+            />
+          </AnimatePresence>
+        </div>
+
+        {/* Image counter */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white">
+          {currentIndex + 1} / {images.length}
+        </div>
+      </div>
+    </motion.div>
   );
 };
 

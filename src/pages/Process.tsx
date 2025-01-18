@@ -40,10 +40,10 @@ const phases: Phase[] = [
               title: "Material Charts",
               description: "Comprehensive selection of textures, finishes, and materials tailored to your space."
             },
-            {
-              title: "Reference Images",
-              description: "Carefully selected inspirational images for each area, ensuring cohesive design throughout."
-            },
+            // {
+            //   title: "Reference Images",
+            //   description: "Carefully selected inspirational images for each area, ensuring cohesive design throughout."
+            // },
             {
               title: "AutoCAD Layout",
               description: "Precise furniture blocking and spacing plans to optimize flow and functionality."
@@ -82,14 +82,14 @@ const phases: Phase[] = [
               title: "Architectural Details",
               description: "Door and window schedules, wall elevations, and detailed construction drawings."
             },
-            {
-              title: "Technical Systems",
-              description: "Lighting plans and electrical looping drawings for seamless integration."
-            },
-            {
-              title: "Furniture Documentation",
-              description: "Working drawings for custom pieces and comprehensive loose furniture specifications."
-            },
+            // {
+            //   title: "Technical Systems",
+            //   description: "Lighting plans and electrical looping drawings for seamless integration."
+            // },
+            // {
+            //   title: "Furniture Documentation",
+            //   description: "Working drawings for custom pieces and comprehensive loose furniture specifications."
+            // },
             {
               title: "Finishing Selections",
               description: "Detailed documentation of upholstery, art, accessories, rugs, and appliances."

@@ -21,7 +21,7 @@ const LoadingScreen = () => {
       className="fixed inset-0 flex items-center justify-center bg-white z-50"
     >
       <div className="relative flex items-center justify-center">
-        <svg className="w-24 h-24 md:w-32 md:h-32" viewBox="0 0 100 100">
+        <svg className="w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48" viewBox="0 0 100 100">
           <circle
             className="text-gray-300"
             strokeWidth="4"
@@ -49,7 +49,7 @@ const LoadingScreen = () => {
           />
         </svg>
         <div className="absolute flex items-center justify-center">
-          <Logo className="w-12 h-12 md:w-16 md:h-16 text-terra" />
+          <Logo className="w-12 h-12 md:w-16 md:h-16 lg:w-24 lg:h-24 text-[#FF4D4D]" />
         </div>
       </div>
     </motion.div>

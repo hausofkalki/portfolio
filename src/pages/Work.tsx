@@ -2,115 +2,24 @@
 import { motion, useScroll, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import Header from "../components/Header";
-import ImagePopup from '../components/ImagePopup';
-
-type Step = {
-  number: string;
-  title: string;
-  description: string;
-  image: string;
-  category: string;
-  link: string;
-  relatedImages: string[];
-};
-
-type Project = {
-  title: string;
-  steps: Step[];
-};
-
-const projects: Project[] = [
-  {
-    title: "Past Projects",
-    steps: [
-      {
-        number: "01",
-        title: "Modern Minimalist Villa",
-        description:
-          "A contemporary residential project emphasizing clean lines and natural light. The design focuses on creating seamless indoor-outdoor connections while maintaining privacy and comfort.",
-        image:
-          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
-        category: "RESIDENTIAL",
-        link: "https://example.com/modern-minimalist-villa",
-        relatedImages: [
-          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
-          "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop",
-          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
-          "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop",
-          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
-          "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop",
-          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
-          // Add more related images here
-        ],
-      },
-      {
-        number: "02",
-        title: "Urban Retail Experience",
-        description:
-          "Reimagining retail spaces for the modern consumer. This project combines digital integration with physical shopping experiences to create an immersive brand environment.",
-        image:
-          "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop",
-        category: "COMMERCIAL",
-        link: "https://example.com/urban-retail-experience",
-        relatedImages: [
-          "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop",
-          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
-          "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop",
-          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop",
-          // Add more related images here
-        ],
-      },
-    ],
-  },
-  {
-    title: "Current Projects",
-    steps: [
-      {
-        number: "03",
-        title: "Luxury Hotel Design",
-        description:
-          "A boutique hotel that blends local culture with contemporary luxury. Each space is carefully crafted to create memorable experiences for guests while maintaining functionality.",
-        image:
-          "https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?q=80&w=2021&auto=format&fit=crop",
-        category: "HOSPITALITY",
-        link: "https://example.com/luxury-hotel-design",
-        relatedImages: [
-          "https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?q=80&w=2021&auto=format&fit=crop",
-          "https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?q=80&w=2021&auto=format&fit=crop",
-          // Add more related images here
-        ],
-      },
-      {
-        number: "04",
-        title: "Corporate Headquarters",
-        description:
-          "A dynamic workplace designed for collaboration and innovation. The space reflects the company's values while providing flexible areas for different work styles.",
-        image:
-          "https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=2069&auto=format&fit=crop",
-        category: "COMMERCIAL",
-        link: "https://example.com/corporate-headquarters",
-        relatedImages: [
-          "https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=2069&auto=format&fit=crop",
-          "https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=2069&auto=format&fit=crop",
-          // Add more related images here
-        ],
-      },
-    ],
-  },
-];
+import { projects } from '../data/projects';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
+import ImageViewer from '../components/ImageViewer';
 
 export default function Work() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ container: containerRef });
   const [currentStep, setCurrentStep] = useState("01");
-  //   const [currentProject, setCurrentProject] = useState('01');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [popupImages, setPopupImages] = useState<string[]>([]);
-  const [popupTitle, setPopupTitle] = useState('');
-  const [popupCategory, setPopupCategory] = useState('');
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [viewerData, setViewerData] = useState<{
+    images: string[];
+    title: string;
+    category: string;
+  } | null>(null);
 
   const numberVariants = {
     enter: {
@@ -149,11 +58,13 @@ export default function Work() {
     };
   }, []);
 
-  const handleImageClick = (images: string[], title: string, category: string) => {
-    setPopupImages(images);
-    setPopupTitle(title);
-    setPopupCategory(category);
-    setIsPopupOpen(true);
+  const handleImageClick = (images: string[], title: string, category: string, initialImage?: string) => {
+    setViewerData({
+      images,
+      title,
+      category
+    });
+    setSelectedImage(initialImage || images[0]);
   };
 
   return (
@@ -202,14 +113,20 @@ export default function Work() {
       </div>
 
       {/* Popup for related images */}
-      {isPopupOpen && (
-        <ImagePopup 
-          images={popupImages} 
-          onClose={() => setIsPopupOpen(false)}
-          title={popupTitle}
-          category={popupCategory}
-        />
-      )}
+      <AnimatePresence>
+        {selectedImage && viewerData && (
+          <ImageViewer 
+            images={viewerData.images}
+            selectedImage={selectedImage}
+            onClose={() => {
+              setSelectedImage(null);
+              setViewerData(null);
+            }}
+            title={viewerData.title}
+            category={viewerData.category}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Project Sections */}
       {projects.map((project) =>
@@ -232,7 +149,7 @@ export default function Work() {
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
               >
-                <a onClick={() => handleImageClick(step.relatedImages, step.title, step.category)}>
+                <a onClick={() => handleImageClick(step.relatedImages, step.title, step.category, step.image)}>
                   <motion.div
                     className="relative aspect-[4/3] overflow-hidden cursor-pointer"
                     animate={{
@@ -240,10 +157,14 @@ export default function Work() {
                     }}
                     transition={{ duration: 0.4 }}
                   >
-                    <img
+                    <LazyLoadImage
                       src={step.image}
                       alt={step.title}
+                      effect="blur"
                       className="w-full h-full object-cover"
+                      placeholderSrc={`${step.image}?w=50`}
+                      wrapperClassName="w-full h-full"
+                      threshold={300}
                     />
                     <motion.div
                       className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center"
