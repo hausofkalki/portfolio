@@ -1,19 +1,15 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useLocation,
-} from "react-router-dom";
-import { useEffect, useState } from "react";
+import { HashRouter } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import { TransitionProvider } from "./context/TransitionContext";
-import { PageTransition } from "./components/PageTransition";
-import LoadingScreen from "./components/LoadingScreen";
 import Hero from "./pages/Hero";
 import About from "./pages/About";
 import Work from "./pages/Work";
 import Process from "./pages/Process";
 import Contact from "./pages/Contact";
+import LoadingScreen from "./components/LoadingScreen";
+import { PageTransition } from "./components/PageTransition";
+import { TransitionProvider } from "./context/TransitionContext";
+import { useEffect, useState } from "react";
 
 function Pages() {
   const location = useLocation();
@@ -79,11 +75,11 @@ function App() {
     loadAssets();
   }, []);
   return (
-    <TransitionProvider>
-      <Router basename="/portfolio">
+    <HashRouter>
+      <TransitionProvider>
         {isLoading ? <LoadingScreen /> : <Pages />}
-      </Router>
-    </TransitionProvider>
+      </TransitionProvider>
+    </HashRouter>
   );
 }
 

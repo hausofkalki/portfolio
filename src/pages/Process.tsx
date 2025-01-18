@@ -245,7 +245,7 @@ export default function Process() {
       
       {/* Progress Bar */}
       <motion.div 
-        className="fixed bottom-8 md:bottom-12 left-0 right-0 h-1 bg-[#FF4D4D]"
+        className="fixed h-1 bg-[#FF4D4D] lg:bottom-12 lg:top-auto top-20 sm:top-20 md:top-24 left-0 right-0"
         style={{ 
           scaleX: scrollYProgress,
           transformOrigin: "0%"
